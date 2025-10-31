@@ -10,8 +10,8 @@ post() {
 
 	echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null 
 
-	sudo apt -y update && sudo apt -y upgrade 
-s
+	sudo apt -y update && sudo apt upgrade -y
+
 	sudo apt install -y ros-humble-desktop ros-dev-tools 
 
 	echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc 
@@ -57,6 +57,7 @@ physical(){
 
 
 question2 (){
+	echo "If you are using UTM, type down: 'Y'"
 	read -rp $'Are you running this script under a physical machine? (E.g You have Ubuntu Jammy installed on your HDD/SSD?)\nSelect (Y/N): ' yn
 	case $yn in
 		[Yy]* ) physical;;
@@ -69,7 +70,7 @@ if [[ ${CHECK} -ge 1 ]]; then
 	post
 fi
 
-read -pr $'Are you running this script under a VirtualBox environment/machine? \nSelect (Y/N): ' yn
+read -rp $'Are you running this script under a VirtualBox VM? \nSelect (Y/N): ' yn
 	case $yn in
 		[Yy]* ) virtualbox;;
 		[Nn]* ) question2;;
