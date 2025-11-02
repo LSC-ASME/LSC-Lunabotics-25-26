@@ -2,20 +2,22 @@
 CHECK=$(lsmod | grep -c vboxvideo)
 
 post() {
-	sudo apt -y update && sudo apt -y upgrade 
+	sudo apt -y update && sudo apt -y upgrade
 
-	sudo add-apt-repository -y universe 
-	
-	sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg 
+	sudo add-apt-repository -y universe
 
-	echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null 
+	sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+
+	echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo "$UBUNTU_CODENAME") main" | sudo tee /etc/apt/sources.list.d/ros2.list >/dev/null
 
 	sudo apt -y update && sudo apt upgrade -y
 
-	sudo apt install -y ros-humble-desktop ros-dev-tools 
+	sudo apt install ros-humble-desktop ros-dev-tools -y
 
-	echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc 
-	 
+	apt install npm python3-venv clang -y
+
+	echo "source /opt/ros/humble/setup.bash" >>~/.bashrc
+
 	sleep 2
 	gnome-terminal
 	echo "Installation Finished! Close this terminal and hop on the new one"
@@ -26,9 +28,9 @@ virtualbox() {
 	echo "Make sure you have your Guest Additions ISO file inserted on your VM!"
 	read -rp "Have you inserted your iso? (Y/N): " prompt
 	case $prompt in
-		[Yy]* ) echo "Starting...";;
-		[Nn]* ) "Install the ISO!" && exit 0;;
-		* ) echo "Please answer (Y/N)";;
+	[Yy]*) echo "Starting..." ;;
+	[Nn]*) "Install the ISO!" && exit 0 ;;
+	*) echo "Please answer (Y/N)" ;;
 	esac
 
 	sudo apt update && sudo apt -y upgrade
@@ -45,24 +47,23 @@ virtualbox() {
 	echo 2...
 	sleep 3
 	echo 1...
-	
+
 	exec reboot
 
 }
 
-physical(){
+physical() {
 	sudo apt install -y curl
 	post
 }
 
-
-question2 (){
+question2() {
 	echo "If you are using UTM, type down: 'Y'"
 	read -rp $'Are you running this script under a physical machine? (E.g You have Ubuntu Jammy installed on your HDD/SSD?)\nSelect (Y/N): ' yn
 	case $yn in
-		[Yy]* ) physical;;
-		[Nn]* ) "Then you don't need this" && exit 0;;
-		* ) echo "Please answer (Y/N)";;
+	[Yy]*) physical ;;
+	[Nn]*) "Then you don't need this" && exit 0 ;;
+	*) echo "Please answer (Y/N)" ;;
 	esac
 }
 
@@ -71,8 +72,8 @@ if [[ ${CHECK} -ge 1 ]]; then
 fi
 
 read -rp $'Are you running this script under a VirtualBox VM? \nSelect (Y/N): ' yn
-	case $yn in
-		[Yy]* ) virtualbox;;
-		[Nn]* ) question2;;
-		* ) echo "Please answer (Y/N)";;
-	esac
+case $yn in
+[Yy]*) virtualbox ;;
+[Nn]*) question2 ;;
+*) echo "Please answer (Y/N)" ;;
+esac
